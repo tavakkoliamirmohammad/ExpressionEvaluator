@@ -4,7 +4,6 @@
 #include <string.h>
 
 extern int yylex();
-extern int yydebug;  // TODO: REMOVE IN PROD, 'yacc' it with -t flag.
 char const *yyerror(const char *str);
 char *convert_number(char *num);
 int variable;
@@ -58,7 +57,7 @@ T:
     };
 F:
     LPAREN expr RPAREN {
-        strcpy($$, $1);
+        strcpy($$, $2);
     }
     | NUMBER {strcpy($$,convert_number($1));};
 %%
@@ -72,7 +71,6 @@ char const *yyerror(const char *str)
 // Program entry point.
 int main()
 {
-    yydebug = 0;
     variable = 1;
     return yyparse();
 }

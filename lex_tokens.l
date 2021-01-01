@@ -1,5 +1,4 @@
 %x COMMENT
-%option noyywrap
 
 delim   [ \t\n]
 ws  {delim}+
