@@ -11,15 +11,14 @@ number  {digit}+
 #include <stdlib.h>
 #include "y.tab.h"
 
-extern YYSTYPE yylval;
 %}
 
 %%
 
 {ws}                { /* skip over blanks */ }
-{number}            {yylval.number = atoi(yytext); return TOKNUMBER;}
+{number}            {sscanf(yytext, "%s", yylval.number); return NUMBER;}
 "+"                 {return PLUS;}
-"/"                 {return DIV;}
+"/"                 {return DIVIDE;}
 "*"                 {return MULTIPLY;}
 "-"                 {return MINUS;}
 "("                 {return LPAREN;}

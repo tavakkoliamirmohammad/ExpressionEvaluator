@@ -7,9 +7,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="745c8336-064c-4eb3-9068-bf960b608baf" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/test.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/a.out" beforeDir="false" afterPath="$PROJECT_DIR$/a.out" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/y.tab.c" beforeDir="false" afterPath="$PROJECT_DIR$/y.tab.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/yacc_syntax.y" beforeDir="false" afterPath="$PROJECT_DIR$/yacc_syntax.y" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +62,7 @@
       <option name="presentableId" value="Default" />
       <updated>1609488760519</updated>
       <workItem from="1609488764411" duration="71000" />
-      <workItem from="1609490139267" duration="2063000" />
+      <workItem from="1609490139267" duration="2343000" />
     </task>
     <servers />
   </component>

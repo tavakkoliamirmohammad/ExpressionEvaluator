@@ -455,9 +455,8 @@ char *yytext;
 #include <stdlib.h>
 #include "y.tab.h"
 
-extern YYSTYPE yylval;
+#line 459 "lex.yy.c"
 #line 460 "lex.yy.c"
-#line 461 "lex.yy.c"
 
 #define INITIAL 0
 #define COMMENT 1
@@ -675,10 +674,10 @@ YY_DECL
 		}
 
 	{
-#line 17 "lex_tokens.l"
+#line 16 "lex_tokens.l"
 
 
-#line 682 "lex.yy.c"
+#line 681 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -738,55 +737,55 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 19 "lex_tokens.l"
+#line 18 "lex_tokens.l"
 { /* skip over blanks */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 20 "lex_tokens.l"
-{yylval.number = atoi(yytext); return TOKNUMBER;}
+#line 19 "lex_tokens.l"
+{sscanf(yytext, "%s", yylval.number); return NUMBER;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 21 "lex_tokens.l"
+#line 20 "lex_tokens.l"
 {return PLUS;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 22 "lex_tokens.l"
-{return DIV;}
+#line 21 "lex_tokens.l"
+{return DIVIDE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 23 "lex_tokens.l"
+#line 22 "lex_tokens.l"
 {return MULTIPLY;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 24 "lex_tokens.l"
+#line 23 "lex_tokens.l"
 {return MINUS;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 25 "lex_tokens.l"
+#line 24 "lex_tokens.l"
 {return LPAREN;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 26 "lex_tokens.l"
+#line 25 "lex_tokens.l"
 {return RPAREN;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 27 "lex_tokens.l"
+#line 26 "lex_tokens.l"
 { /* skip all other symbols, they're printed by default */ }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 29 "lex_tokens.l"
+#line 28 "lex_tokens.l"
 ECHO;
 	YY_BREAK
-#line 790 "lex.yy.c"
+#line 789 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 	yyterminate();
@@ -1792,5 +1791,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 29 "lex_tokens.l"
+#line 28 "lex_tokens.l"
 

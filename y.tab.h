@@ -49,40 +49,33 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TOKNUMBER = 258,
-    TOKWORD = 259,
-    PLUS = 260,
-    MINUS = 261,
-    DIV = 262,
-    MULTIPLY = 263,
-    LPAREN = 264,
-    RPAREN = 265,
-    TOKBEGIN = 266,
-    TOKCOMMA = 267
+    NUMBER = 258,
+    PLUS = 259,
+    MINUS = 260,
+    DIVIDE = 261,
+    MULTIPLY = 262,
+    LPAREN = 263,
+    RPAREN = 264
   };
 #endif
 /* Tokens.  */
-#define TOKNUMBER 258
-#define TOKWORD 259
-#define PLUS 260
-#define MINUS 261
-#define DIV 262
-#define MULTIPLY 263
-#define LPAREN 264
-#define RPAREN 265
-#define TOKBEGIN 266
-#define TOKCOMMA 267
+#define NUMBER 258
+#define PLUS 259
+#define MINUS 260
+#define DIVIDE 261
+#define MULTIPLY 262
+#define LPAREN 263
+#define RPAREN 264
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "yacc_syntax.y"
+#line 14 "yacc_syntax.y"
 
-    int number;
-    char *string;
+    char number[100];
 
-#line 86 "y.tab.h"
+#line 79 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

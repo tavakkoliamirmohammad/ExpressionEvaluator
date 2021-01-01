@@ -72,11 +72,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern int yydebug;  // TODO: REMOVE IN PROD, 'yacc' it with -t flag.
 extern int yylex();
+extern int yydebug;  // TODO: REMOVE IN PROD, 'yacc' it with -t flag.
 char const *yyerror(const char *str);
+char *convert_number(char *num);
+int variable;
 
-#line 80 "y.tab.c"
+#line 82 "y.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -124,40 +126,33 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TOKNUMBER = 258,
-    TOKWORD = 259,
-    PLUS = 260,
-    MINUS = 261,
-    DIV = 262,
-    MULTIPLY = 263,
-    LPAREN = 264,
-    RPAREN = 265,
-    TOKBEGIN = 266,
-    TOKCOMMA = 267
+    NUMBER = 258,
+    PLUS = 259,
+    MINUS = 260,
+    DIVIDE = 261,
+    MULTIPLY = 262,
+    LPAREN = 263,
+    RPAREN = 264
   };
 #endif
 /* Tokens.  */
-#define TOKNUMBER 258
-#define TOKWORD 259
-#define PLUS 260
-#define MINUS 261
-#define DIV 262
-#define MULTIPLY 263
-#define LPAREN 264
-#define RPAREN 265
-#define TOKBEGIN 266
-#define TOKCOMMA 267
+#define NUMBER 258
+#define PLUS 259
+#define MINUS 260
+#define DIVIDE 261
+#define MULTIPLY 262
+#define LPAREN 263
+#define RPAREN 264
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 15 "yacc_syntax.y"
+#line 14 "yacc_syntax.y"
 
-    int number;
-    char *string;
+    char number[100];
 
-#line 161 "y.tab.c"
+#line 156 "y.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -474,21 +469,21 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  3
+#define YYFINAL  8
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   1
+#define YYLAST   14
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  13
+#define YYNTOKENS  10
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  2
+#define YYNNTS  5
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  3
+#define YYNRULES  10
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  4
+#define YYNSTATES  18
 
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   267
+#define YYMAXUTOK   264
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -526,14 +521,15 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12
+       5,     6,     7,     8,     9
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    55,    55,    56
+       0,    34,    34,    36,    40,    43,    47,    51,    55,    60,
+      63
 };
 #endif
 
@@ -542,9 +538,8 @@ static const yytype_int8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "TOKNUMBER", "TOKWORD", "PLUS", "MINUS",
-  "DIV", "MULTIPLY", "LPAREN", "RPAREN", "TOKBEGIN", "TOKCOMMA", "$accept",
-  "unit", YY_NULLPTR
+  "$end", "error", "$undefined", "NUMBER", "PLUS", "MINUS", "DIVIDE",
+  "MULTIPLY", "LPAREN", "RPAREN", "$accept", "L", "expr", "T", "F", YY_NULLPTR
 };
 #endif
 
@@ -553,12 +548,11 @@ static const char *const yytname[] =
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_int16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264
 };
 # endif
 
-#define YYPACT_NINF (-12)
+#define YYPACT_NINF (-5)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -572,7 +566,8 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -11,   -12,     1,   -12
+      -1,    -5,    -1,     6,     4,    -3,    -5,    -4,    -5,    -1,
+      -1,    -1,    -1,    -5,    -3,    -3,    -5,    -5
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -580,19 +575,20 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       2,     3,     0,     1
+       0,    10,     0,     0,     2,     5,     8,     0,     1,     0,
+       0,     0,     0,     9,     3,     4,     7,     6
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -12,   -12
+      -5,    -5,    10,     1,     2
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2
+      -1,     3,     4,     5,     6
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -600,31 +596,36 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     3
+       9,    10,     1,    11,    12,    13,     8,     2,     9,    10,
+      14,    15,     7,    16,    17
 };
 
 static const yytype_int8 yycheck[] =
 {
-      11,     0
+       4,     5,     3,     6,     7,     9,     0,     8,     4,     5,
+       9,    10,     2,    11,    12
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    11,    14,     0
+       0,     3,     8,    11,    12,    13,    14,    12,     0,     4,
+       5,     6,     7,     9,    13,    13,    14,    14
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    13,    14,    14
+       0,    10,    11,    12,    12,    12,    13,    13,    13,    14,
+      14
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     0,     1
+       0,     2,     1,     3,     3,     1,     3,     3,     1,     3,
+       1
 };
 
 
@@ -1319,8 +1320,80 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+  case 2:
+#line 34 "yacc_syntax.y"
+     {printf("Print %s\n", (yyvsp[0].number));}
+#line 1327 "y.tab.c"
+    break;
 
-#line 1324 "y.tab.c"
+  case 3:
+#line 36 "yacc_syntax.y"
+                {
+        printf("Assign %s PLU %s to t%d\n",(yyvsp[-2].number), (yyvsp[0].number), variable);
+        sprintf((yyval.number),"t%d", variable++);
+        }
+#line 1336 "y.tab.c"
+    break;
+
+  case 4:
+#line 40 "yacc_syntax.y"
+                  {printf("Assign %s Min %s to t%d\n",(yyvsp[-2].number), (yyvsp[0].number), variable);
+     sprintf((yyval.number),"t%d", variable++);
+    }
+#line 1344 "y.tab.c"
+    break;
+
+  case 5:
+#line 43 "yacc_syntax.y"
+       {
+        strcpy((yyval.number), (yyvsp[0].number));
+    }
+#line 1352 "y.tab.c"
+    break;
+
+  case 6:
+#line 47 "yacc_syntax.y"
+                 {
+        printf("Assign %s Mul %s to t%d\n",(yyvsp[-2].number), (yyvsp[0].number), variable);
+        sprintf((yyval.number),"t%d", variable++);
+     }
+#line 1361 "y.tab.c"
+    break;
+
+  case 7:
+#line 51 "yacc_syntax.y"
+                {
+        printf("Assign %s Div %s to t%d\n",(yyvsp[-2].number), (yyvsp[0].number), variable);
+        sprintf((yyval.number),"t%d", variable++);
+        }
+#line 1370 "y.tab.c"
+    break;
+
+  case 8:
+#line 55 "yacc_syntax.y"
+       {
+        strcpy((yyval.number), (yyvsp[0].number));
+       
+    }
+#line 1379 "y.tab.c"
+    break;
+
+  case 9:
+#line 60 "yacc_syntax.y"
+                       {
+        strcpy((yyval.number), (yyvsp[-2].number));
+    }
+#line 1387 "y.tab.c"
+    break;
+
+  case 10:
+#line 63 "yacc_syntax.y"
+             {strcpy((yyval.number),convert_number((yyvsp[0].number)));}
+#line 1393 "y.tab.c"
+    break;
+
+
+#line 1397 "y.tab.c"
 
       default: break;
     }
@@ -1552,7 +1625,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 59 "yacc_syntax.y"
+#line 64 "yacc_syntax.y"
 
 
 // Called when parse error was detected.
@@ -1561,37 +1634,85 @@ char const *yyerror(const char *str)
     fprintf(stderr, "yyerror: %s\n", str);
 }
 
-
 // Program entry point.
 int main()
 {
-    yydebug = 1;  // TODO: REMOVE IN PROD, set 0 for no debug info.
+    yydebug = 0;
+    variable = 1;
     return yyparse();
 }
 
-
-char* translate_number(char* num) {
-    // printf("%d\n", value);
-
-    // 10, 100, 1000 should be printed as Ten, Hun, Tou
-
-    value = atoi(num);
-
-    // if value == 0 print Zer
-
-    int upper = value / 1000;
-    int lower = value % 1000;
-    
-    // when number is not zero
-    char* up = parse_number(upper, 1, upper != 0);
-    // printf("%s", upper && lower ? "_" : "");
-    char* low = parse_number(lower, 0, upper != 0);
-
-    if (upper && lower) { 
-        strcat(up, "_");
+const char *number_mapping_token(int number) {
+    switch (number) {
+        case 0:
+            return "Zer";
+        case 1:
+            return "One";
+        case 2:
+            return "Two";
+        case 3:
+            return "Thr";
+        case 4:
+            return "Fou";
+        case 5:
+            return "Fiv";
+        case 6:
+            return "Six";
+        case 7:
+            return "Sev";
+        case 8:
+            return "Eig";
+        case 9:
+            return "Nin";
+        case 1000:
+            return "Tou_";
+        case 100:
+            return "Hun_";
+        case 10:
+            return "Ten_";
     }
-    strcat(up, low);
+}
 
-    return up;
-    
+
+char *number_mapper(char *number) {
+    char *converted_number = (char *) malloc(200 * sizeof(char));
+    converted_number[0] = '\0';
+    int division = 1;
+    for (int i = 0; i < strlen(number) - 1; ++i) {
+        division *= 10;
+    }
+    while (*number) {
+        strcat(converted_number, number_mapping_token((*number) - '0'));
+        if (division > 1) {
+            strcat(converted_number, number_mapping_token(division));
+        } else {
+            return converted_number;
+        }
+        division /= 10;
+        ++number;
+    }
+}
+
+char *convert_number(char *num) {
+
+    char *converted = (char *) malloc(400 * sizeof(char));
+    char *lower_part = (char *) malloc(4 * sizeof(char));
+    if (strlen(num) > 3) {
+        char *upper_part = (char *) malloc(4 * sizeof(char));
+        strncpy(upper_part, num, strlen(num) - 3);
+        upper_part = number_mapper(upper_part);
+        if (strlen(upper_part) != 0) {
+            strcat(converted, "(");
+            strcat(converted, upper_part);
+            strcat(converted, ")");
+            strcat(converted, number_mapping_token(1000));
+        }
+        strcpy(lower_part, num + strlen(num) - 3);
+        lower_part = number_mapper(lower_part);
+    } else {
+        strcpy(lower_part, num);
+        lower_part = number_mapper(lower_part);
+    }
+    strcat(converted, lower_part);
+    return converted;
 }

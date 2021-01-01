@@ -3,59 +3,64 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern int yydebug;  // TODO: REMOVE IN PROD, 'yacc' it with -t flag.
 extern int yylex();
+extern int yydebug;  // TODO: REMOVE IN PROD, 'yacc' it with -t flag.
 char const *yyerror(const char *str);
+char *convert_number(char *num);
+int variable;
 %}
-
-
-%start unit
 
 %union
 {
-    int number;
-    char *string;
+    char number[100];
 }
 
-%token <number> TOKNUMBER
-%token <string> TOKWORD
+%token <number> NUMBER
 
 %token PLUS
 %token MINUS
-%token DIV
+%token DIVIDE
 %token MULTIPLY
 
-%token LPAREN
-%token RPAREN
 
-%token TOKBEGIN
-%token TOKCOMMA
+%token <number> LPAREN
+%token <number> RPAREN
 
-%type <string> token
-
-// %left, %right, %nonassoc - precedence and association setting.
-// Start with lower priority - next to higher.
-// Useful for expression ambiguity like:
-// expr: expr '+' expr | expr '*' expr | int;
-
-// Declaration example:
-//%left PLUS MINUS
-//%left MULTIPLY DIVIDE
-
-// Also some specific RULES may have a precedence equal
-// to the precedence of one from this list.
-// Just write %prec after the rule before the semantic action.
-// Useful for "Dangling else".
-// Example of solution for "Dangling else" with variation:
-// https://stackoverflow.com/questions/6911214/how-to-make-else-associate-with-farthest-if-in-yacc
+%type <number> expr T F;
 
 %%
 
-unit
-        : /* empty */
-        | TOKBEGIN
-        ;
-
+L: 
+expr {printf("Print %s\n", $1);};
+expr: 
+    expr PLUS T {
+        printf("Assign %s PLU %s to t%d\n",$1, $3, variable);
+        sprintf($$,"t%d", variable++);
+        }
+    |expr MINUS T {printf("Assign %s Min %s to t%d\n",$1, $3, variable);
+     sprintf($$,"t%d", variable++);
+    }
+    |T {
+        strcpy($$, $1);
+    };
+T: 
+    T MULTIPLY F {
+        printf("Assign %s Mul %s to t%d\n",$1, $3, variable);
+        sprintf($$,"t%d", variable++);
+     }
+    |T DIVIDE F {
+        printf("Assign %s Div %s to t%d\n",$1, $3, variable);
+        sprintf($$,"t%d", variable++);
+        }
+    |F {
+        strcpy($$, $1);
+       
+    };
+F:
+    LPAREN expr RPAREN {
+        strcpy($$, $1);
+    }
+    | NUMBER {strcpy($$,convert_number($1));};
 %%
 
 // Called when parse error was detected.
@@ -64,11 +69,11 @@ char const *yyerror(const char *str)
     fprintf(stderr, "yyerror: %s\n", str);
 }
 
-
 // Program entry point.
 int main()
 {
-    yydebug = 1;  // TODO: REMOVE IN PROD, set 0 for no debug info.
+    yydebug = 0;
+    variable = 1;
     return yyparse();
 }
 
@@ -104,80 +109,45 @@ const char *number_mapping_token(int number) {
 }
 
 
-char *parse_number(int number) {
-    char *translated = (char *) malloc(400 * sizeof(char));
-    translated[0] = '\0';
-    int division = 100;
-    int is_digit_found = 0;
-    while (1) {
-        int upper_part;
-        if (division == 0) {
-            upper_part = number;
+char *number_mapper(char *number) {
+    char *converted_number = (char *) malloc(200 * sizeof(char));
+    converted_number[0] = '\0';
+    int division = 1;
+    for (int i = 0; i < strlen(number) - 1; ++i) {
+        division *= 10;
+    }
+    while (*number) {
+        strcat(converted_number, number_mapping_token((*number) - '0'));
+        if (division > 1) {
+            strcat(converted_number, number_mapping_token(division));
         } else {
-            upper_part = number / division;
-            number = number % division;
+            return converted_number;
         }
-        if (upper_part != 0) {
-            strcat(translated, number_mapping_token(upper_part));
-            if (division > 1) {
-                strcat(translated, number_mapping_token(division));
-            } else {
-                return translated;
-            }
-            number = number % division;
-            division /= 10;
-            is_digit_found = 1;
-        }
-        if (upper_part == 0) {
-            if (division && is_digit_found) {
-                strcat(translated, number_mapping_token(upper_part));
-                strcat(translated, number_mapping_token(division));
-                division /= 10;
-            } else if (division == 0) {
-                return translated;
-            } else {
-                division /= 10;
-            }
-        }
+        division /= 10;
+        ++number;
     }
 }
 
+char *convert_number(char *num) {
 
-char *translate_number(int num) {
-    printf("%d\n", num);
-
-    int upper = num / 1000;
-    int lower = num % 1000;
-    char *translated = (char *) malloc(400 * sizeof(char));
-    // when number is not zero
-    char *up = parse_number(upper);
-    if (strlen(up) != 0) {
-        strcat(translated, "(");
-        strcat(translated, up);
-        strcat(translated, ")");
-        strcat(translated, number_mapping_token(1000));
+    char *converted = (char *) malloc(400 * sizeof(char));
+    char *lower_part = (char *) malloc(4 * sizeof(char));
+    if (strlen(num) > 3) {
+        char *upper_part = (char *) malloc(4 * sizeof(char));
+        strncpy(upper_part, num, strlen(num) - 3);
+        upper_part = number_mapper(upper_part);
+        if (strlen(upper_part) != 0) {
+            strcat(converted, "(");
+            strcat(converted, upper_part);
+            strcat(converted, ")");
+            strcat(converted, number_mapping_token(1000));
+        }
+        strcpy(lower_part, num + strlen(num) - 3);
+        lower_part = number_mapper(lower_part);
+    } else {
+        strcpy(lower_part, num);
+        lower_part = number_mapper(lower_part);
     }
-    // printf("%s", upper && lower ? "_" : "");
-    char *low = parse_number(lower);
-    strcat(translated, low);
-    printf("%s\n", translated);
-    return translated;
+    strcat(converted, lower_part);
+    return converted;
 }
-
-//int main() {
-////    translate_number(45320);
-//    translate_number(45032);
-////    translate_number(45320);
-////    translate_number(1);
-////    translate_number(10000);
-////    translate_number(1000);
-////    translate_number(100);
-////    translate_number(12925);
-////    translate_number(106);
-////    translate_number(5);
-////    translate_number(2840);
-////    translate_number(99999);
-////    translate_number(9999);
-//
-//    return 0;
-//}
