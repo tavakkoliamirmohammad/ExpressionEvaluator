@@ -8,6 +8,9 @@ char const *yyerror(const char *str);
 int variable;
 int number_count;
 extern int yydebug;  // TODO: REMOVE IN PROD, 'yacc' it with -t flag.
+
+//TODO: fix endline for input
+
 %}
 
 %union
